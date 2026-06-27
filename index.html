@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nasipadangMAX — Mood Menu Scanner</title>
+  <meta name="description" content="Mood scanner elegan untuk warung makan dengan rekomendasi menu, template promo, download gambar, dan WhatsApp flow." />
+  <meta name="theme-color" content="#1b0d0d" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#140808;
+      --bg2:#1b0d0d;
+      --bg3:#261212;
+      --surface:#2d1515;
+      --surface-soft:rgba(45,21,21,.78);
+      --surface-strong:rgba(24,10,10,.90);
+      --text:#fff7f1;
+      --muted:#dcc8c0;
+      --primary:#b93232;
+      --primary-2:#e05454;
+      --primary-soft:#ffb3b3;
+      --cream:#f3dfc3;
+      --gold:#d5ae69;
+      --gold-soft:#f6e7cc;
+      --line:rgba(255,255,255,.10);
+      --line-soft:rgba(255,255,255,.06);
+      --shadow:0 24px 80px rgba(0,0,0,.45);
+      --radius-xl:34px;
+      --radius-lg:24px;
+      --radius-md:18px;
+      --wrap:1220px;
+      --photo:url('https://oci-useast-backend-public.dupdub.com/subtitles/image/3a79bb1a-6509-4f13-be70-c73ac22c311e.PNG');
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;padding:0;min-height:100%;
+      background:
+        radial-gradient(circle at top left, rgba(243,223,195,.10), transparent 24%),
+        radial-gradient(circle at top right, rgba(224,84,84,.10), transparent 20%),
+        radial-gradient(circle at bottom center, rgba(213,174,105,.08), transparent 22%),
+        linear-gradient(180deg,var(--bg3),var(--bg2) 48%,var(--bg));
+      color:var(--text);
+      font-family:Inter,system-ui,sans-serif;
+    }
+    body{overflow-x:hidden}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer;border:0}
+    img,video,canvas{display:block;max-width:100%}
+
+    .screen{display:none;min-height:100vh;position:relative;overflow:hidden}
+    .screen.active{display:block;animation:screenIn .45s ease}
+    .container{width:min(var(--wrap),calc(100% - 28px));margin:0 auto}
+
+    .bg-photo,.tech-bg,.particles,.bg-lines,.orb{
+      position:absolute;inset:0;pointer-events:none
+    }
+
+    .bg-photo{
+      z-index:-5;
+      background-image:var(--photo);
+      background-size:cover;
+      background-position:center;
+      filter:brightness(.28) saturate(.96) contrast(1.04);
+      transform:scale(1.06);
+    }
+    .bg-photo::after{
+      content:"";position:absolute;inset:0;
+      background:
+        linear-gradient(180deg, rgba(20,8,8,.34), rgba(20,8,8,.76) 44%, rgba(20,8,8,.95)),
+        radial-gradient(circle at 20% 14%, rgba(224,84,84,.15), transparent 25%),
+        radial-gradient(circle at 82% 14%, rgba(213,174,105,.12), transparent 18%),
+        radial-gradient(circle at 52% 88%, rgba(243,223,195,.09), transparent 24%);
+    }
+
+    .tech-bg{
+      z-index:-3;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 92%);
+      opacity:.26;
+    }
+
+    .bg-lines{
+      z-index:-2;
+      background:
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,.025) 45%, transparent 60%),
+        linear-gradient(300deg, transparent 0%, rgba(224,84,84,.05) 48%, transparent 62%);
+      animation:bgSweep 12s linear infinite;
+      opacity:.45;
+    }
+
+    .particles{
+      z-index:-1;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(224,84,84,.45) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 80% 25%, rgba(213,174,105,.55) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 40% 70%, rgba(255,255,255,.28) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 70% 80%, rgba(255,215,215,.28) 0 1px, transparent 1.8px);
+      background-size: 180px 180px, 220px 220px, 260px 260px, 200px 200px;
+      animation:particleFloat 14s linear infinite;
+      opacity:.35;
+    }
+
+    .orb{
+      border-radius:999px;filter:blur(70px);opacity:.18
+    }
+    .orb1{width:280px;height:280px;left:-90px;top:90px;background:#c73838}
+    .orb2{width:320px;height:320px;right:-110px;top:120px;background:#8f1f1f}
+    .orb3{width:240px;height:240px;left:30%;bottom:-80px;background:var(--gold)}
+
+    .chip{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 14px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      backdrop-filter:blur(14px);
+      color:#fff3ed;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase
+    }
+    .chip-dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,var(--gold-soft),var(--primary-2),var(--primary-soft));
+      box-shadow:0 0 18px rgba(224,84,84,.45);
+    }
+
+    .panel{
+      position:relative;border-radius:var(--radius-xl);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)),
+        linear-gradient(180deg, rgba(58,24,24,.82), rgba(23,10,10,.88));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+    }
+    .panel::before{
+      content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;
+      background:linear-gradient(135deg, rgba(255,255,255,.16), rgba(213,174,105,.22), rgba(224,84,84,.16), rgba(255,255,255,.04));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
+    }
+
+    .hero{
+      min-height:100vh;display:grid;align-items:center;padding:28px 0;
+    }
+    .hero-grid{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;
+    }
+    .hero-title{
+      margin:18px 0 18px;
+      font-family:Orbitron,Inter,sans-serif;
+      font-size:clamp(2.5rem,6vw,5.6rem);
+      line-height:.95;
+      text-transform:uppercase;
+      letter-spacing:.02em;
+      text-shadow:0 0 24px rgba(224,84,84,.12), 0 10px 30px rgba(0,0,0,.45);
+    }
+    .hero-title .cy{color:#ffaaaa}
+    .hero-title .go{color:var(--gold-soft)}
+    .hero-desc{
+      max-width:700px;color:var(--muted);line-height:1.95;
+      font-size:clamp(1rem,2vw,1.08rem);margin:0 0 28px;
+    }
+
+    .hero-card{padding:24px}
+    .feature-list{display:grid;gap:14px;margin-top:16px}
+    .feature{
+      display:flex;gap:14px;padding:15px;border-radius:20px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+      transition:transform .25s ease, border-color .25s ease, background .25s ease;
+    }
+    .feature:hover{
+      transform:translateY(-2px);
+      border-color:rgba(224,84,84,.18);
+      background:rgba(255,255,255,.05);
+    }
+    .icon{
+      width:46px;height:46px;flex:0 0 46px;border-radius:15px;display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(224,84,84,.18), rgba(213,174,105,.14), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.08);
+      font-size:18px;
+      box-shadow:0 0 22px rgba(224,84,84,.06)
+    }
+    .feature h3{margin:0 0 4px;font-size:15px}
+    .feature p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+
+    .actions{display:flex;flex-wrap:wrap;gap:14px}
+    .btn{
+      min-height:56px;padding:14px 24px;border-radius:999px;
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      font-weight:900;letter-spacing:.01em;
+      transition:transform .24s ease, box-shadow .24s ease, opacity .24s ease, border-color .24s ease;
+      position:relative;overflow:hidden;
+    }
+    .btn::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.18) 45%, transparent 60%);
+      transform:translateX(-120%);
+      transition:transform .6s ease;
+    }
+    .btn:hover::after{transform:translateX(140%)}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(135deg,#e05454,#8f1f1f);
+      box-shadow:0 18px 45px rgba(224,84,84,.16), 0 10px 24px rgba(213,174,105,.12);
+    }
+    .btn-secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter:blur(12px);
+    }
+    .btn-secondary:hover{border-color:rgba(224,84,84,.22)}
+
+    .micro-note,.small-note,.scan-note,.consent,.result-close,.warung-text span,.helper{
+      color:var(--muted);line-height:1.8
+    }
+
+    .scan-wrap{
+      min-height:100vh;display:grid;place-items:center;padding:24px 0 36px;
+      background:
+        radial-gradient(circle at top, rgba(224,84,84,.12), transparent 26%),
+        radial-gradient(circle at 85% 8%, rgba(213,174,105,.10), transparent 18%),
+        linear-gradient(180deg,#1b0d0d,#140808);
+    }
+    .scan-shell{width:min(1080px,calc(100% - 22px));display:grid;gap:18px}
+    .scan-title{
+      margin:10px 0 0;font-family:Orbitron,Inter,sans-serif;
+      font-size:clamp(2rem,5vw,3.8rem);
+      line-height:1;text-transform:uppercase;
+      text-shadow:0 0 20px rgba(224,84,84,.18);
+    }
+    .scan-sub{margin:10px 0 0;color:var(--muted);line-height:1.85;max-width:780px}
+
+    .camera-card{padding:16px}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);
+      color:#fff3ee;font-size:13px;font-weight:800
+    }
+
+    .camera-stage{
+      position:relative;overflow:hidden;border-radius:28px;
+      background:#140909;
+      min-height:560px;max-height:76vh;aspect-ratio:9/13;
+      display:grid;place-items:center;
+      box-shadow:inset 0 0 60px rgba(224,84,84,.08);
+    }
+    video{
+      width:100%;height:100%;object-fit:cover;
+      transform:scaleX(-1);
+      filter:saturate(1.05) contrast(1.04) brightness(1.01);
+      background:#000;
+    }
+
+    .camera-stage::before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(224,84,84,.04), transparent 18%, transparent 82%, rgba(213,174,105,.05)),
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,.02) 0px,
+          rgba(255,255,255,.02) 2px,
+          transparent 2px,
+          transparent 6px
+        );
+      mix-blend-mode:screen;
+      opacity:.48;
+    }
+
+    .radar-ring,.radar-ring2,.scan-line,.face-guide,.orbit,.orbit2,.hud-corner,.hud-corner2,.hud-corner3,.hud-corner4,.scanner-dots{
+      position:absolute;pointer-events:none;
+    }
+
+    .face-guide{
+      width:min(64vw,356px);
+      aspect-ratio:.82/1;
+      border-radius:42% 42% 38% 38% / 34% 34% 46% 46%;
+      border:2px solid rgba(255,214,214,.82);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.08) inset,
+        0 0 40px rgba(224,84,84,.18),
+        0 0 80px rgba(224,84,84,.05);
+    }
+    .radar-ring,.radar-ring2{
+      width:min(64vw,356px);
+      aspect-ratio:.82/1;
+      border-radius:42% 42% 38% 38% / 34% 34% 46% 46%;
+      border:1px solid rgba(213,174,105,.18);
+    }
+    .radar-ring{animation:ringPulse 2.6s ease-in-out infinite}
+    .radar-ring2{animation:ringPulse2 3.2s ease-in-out infinite}
+
+    .scan-line{
+      left:8%;right:8%;height:2px;
+      background:linear-gradient(90deg,transparent,#ffb1b1,var(--gold-soft),#ff9a9a,transparent);
+      box-shadow:0 0 28px rgba(224,84,84,.35), 0 0 18px rgba(213,174,105,.15);
+      animation:scanMove 2.1s linear infinite;
+    }
+
+    .orbit,.orbit2{
+      width:min(76vw,430px);aspect-ratio:1/1;border-radius:999px;
+      border:1px dashed rgba(224,84,84,.13);
+      animation:spin 12s linear infinite;
+    }
+    .orbit2{
+      width:min(84vw,520px);
+      border-color:rgba(213,174,105,.10);
+      animation-direction:reverse;
+      animation-duration:18s;
+    }
+    .orbit::before,.orbit2::before{
+      content:"";position:absolute;width:12px;height:12px;border-radius:50%;
+      background:linear-gradient(135deg,#ff9a9a,#fff);
+      top:8%;left:50%;transform:translateX(-50%);
+      box-shadow:0 0 18px rgba(224,84,84,.5);
+    }
+    .orbit2::before{
+      background:linear-gradient(135deg,var(--gold-soft),#fff3cf);
+      top:auto;bottom:12%;left:50%;
+      box-shadow:0 0 18px rgba(213,174,105,.45);
+    }
+
+    .hud-corner,.hud-corner2,.hud-corner3,.hud-corner4{
+      width:34px;height:34px;border:3px solid rgba(255,241,236,.72)
+    }
+    .hud-corner{left:calc(50% - min(64vw,356px)/2);top:calc(50% - min(64vw,356px)/1.95);border-right:0;border-bottom:0;border-top-left-radius:14px}
+    .hud-corner2{right:calc(50% - min(64vw,356px)/2);top:calc(50% - min(64vw,356px)/1.95);border-left:0;border-bottom:0;border-top-right-radius:14px}
+    .hud-corner3{left:calc(50% - min(64vw,356px)/2);bottom:calc(50% - min(64vw,356px)/1.95);border-right:0;border-top:0;border-bottom-left-radius:14px}
+    .hud-corner4{right:calc(50% - min(64vw,356px)/2);bottom:calc(50% - min(64vw,356px)/1.95);border-left:0;border-top:0;border-bottom-right-radius:14px}
+
+    .scanner-dots{
+      width:min(64vw,356px);height:12px;display:flex;justify-content:space-between;align-items:center;
+      top:calc(50% + min(64vw,356px)/2.2);
+    }
+    .scanner-dots span{
+      width:8px;height:8px;border-radius:50%;
+      background:rgba(255,214,214,.9);
+      box-shadow:0 0 14px rgba(224,84,84,.45);
+      animation:dotBlink 1.6s infinite ease-in-out;
+    }
+    .scanner-dots span:nth-child(2){animation-delay:.15s}
+    .scanner-dots span:nth-child(3){animation-delay:.3s}
+    .scanner-dots span:nth-child(4){animation-delay:.45s}
+    .scanner-dots span:nth-child(5){animation-delay:.6s}
+
+    .scan-bottom{display:grid;gap:14px;margin-top:14px}
+    .status-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+    .status-text{
+      font-weight:900;color:#ffd4d4;letter-spacing:.02em;
+      text-shadow:0 0 18px rgba(224,84,84,.2)
+    }
+    .status-helper{color:var(--muted);font-size:14px}
+    .progress{
+      height:12px;border-radius:999px;overflow:hidden;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.05);
+      position:relative;
+    }
+    .progress::before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+      animation:progressShine 2.4s linear infinite;
+    }
+    .progress-bar{
+      width:0%;height:100%;border-radius:inherit;
+      background:linear-gradient(90deg,#b52c2c,#e05454,#f3dfc3,#d5ae69);
+      box-shadow:0 0 24px rgba(224,84,84,.2);
+      transition:width .14s linear;
+    }
+
+    .result-wrap{
+      min-height:100vh;display:flex;align-items:center;padding:28px 0 40px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(224,84,84,.10), transparent 28%),
+        radial-gradient(circle at 88% 0%, rgba(213,174,105,.10), transparent 24%),
+        linear-gradient(180deg,#1b0d0d,#140808);
+    }
+    .result-grid{
+      display:grid;grid-template-columns:1.04fr .96fr;gap:24px;align-items:start;
+    }
+    .result-card,.side-card,.menu-card,.template-card{padding:24px}
+    .result-head{
+      display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px
+    }
+    .result-title,.template-title,.final-title{
+      margin:0;
+      font-family:Orbitron,Inter,sans-serif;
+      text-transform:uppercase;
+      line-height:1;
+    }
+    .result-title{font-size:clamp(2rem,5vw,3.8rem)}
+    .template-title{font-size:clamp(1.55rem,4vw,2.3rem)}
+    .final-title{font-size:clamp(1.8rem,4vw,3rem)}
+    .mood-pill{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
+      background:rgba(224,84,84,.12);
+      color:#ffd7d7;
+      border:1px solid rgba(224,84,84,.22);
+      font-weight:900;
+      box-shadow:0 0 18px rgba(224,84,84,.08);
+    }
+    .result-copy,.menu-reason{line-height:1.9}
+    .result-copy{font-size:1.05rem;margin:16px 0 0}
+    .menu-card{margin-top:18px}
+    .menu-label{
+      color:var(--gold-soft);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px
+    }
+    .menu-name{
+      margin:0 0 10px;font-size:clamp(1.8rem,4vw,2.45rem);font-weight:900;line-height:1.08
+    }
+
+    .side-stack{display:grid;gap:18px}
+    .warung-photo{
+      position:relative;min-height:240px;border-radius:24px;overflow:hidden;
+      background-image:var(--photo);background-size:cover;background-position:center;
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .warung-photo::after{
+      content:"";position:absolute;inset:0;
+      background:
+        linear-gradient(180deg, rgba(20,8,8,.08), rgba(20,8,8,.7)),
+        radial-gradient(circle at 84% 18%, rgba(213,174,105,.2), transparent 24%);
+    }
+    .warung-text{
+      position:absolute;left:16px;right:16px;bottom:16px;z-index:1;
+      padding:14px 16px;border-radius:18px;
+      background:rgba(30,12,12,.54);backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.06)
+    }
+    .warung-text strong{display:block;color:var(--gold-soft);margin-bottom:4px}
+
+    .tiktok-question{
+      margin-top:22px;padding:18px;border-radius:22px;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .tiktok-question h3{margin:0 0 8px;font-size:1.1rem;color:var(--gold-soft)}
+    .tiktok-question p{margin:0 0 14px;color:var(--muted);line-height:1.8}
+
+    .template-hidden{display:none!important}
+    .template-shell{margin-top:22px;display:grid;gap:18px}
+    .post-template{
+      position:relative;padding:18px;border-radius:26px;overflow:hidden;
+      background:
+        radial-gradient(circle at top right, rgba(213,174,105,.10), transparent 24%),
+        radial-gradient(circle at top left, rgba(224,84,84,.14), transparent 24%),
+        radial-gradient(circle at bottom center, rgba(243,223,195,.08), transparent 22%),
+        linear-gradient(180deg, rgba(42,15,15,.95), rgba(22,9,9,.98));
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .post-template::before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,.06) 38%, transparent 60%);
+      transform:translateX(-120%);
+      animation:shineSweep 4.8s linear infinite;
+    }
+
+    .template-top{
+      display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px
+    }
+    .brand-big{
+      font-family:Orbitron,Inter,sans-serif;font-size:clamp(1.1rem,3vw,1.6rem);font-weight:900;
+      letter-spacing:.08em;text-transform:uppercase;
+    }
+    .brand-big span{color:var(--gold-soft)}
+
+    .template-grid{
+      display:grid;grid-template-columns:1.08fr .92fr;gap:18px;align-items:stretch;
+    }
+    .face-shot-wrap{
+      min-height:440px;
+      border-radius:24px;
+      overflow:hidden;
+      position:relative;
+      background:
+        radial-gradient(circle at top, rgba(224,84,84,.16), transparent 24%),
+        #120708;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        inset 0 0 36px rgba(224,84,84,.10),
+        0 14px 30px rgba(0,0,0,.24);
+    }
+    .face-shot{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center center;
+      background:#01030a
+    }
+    .face-shot-label{
+      position:absolute;left:12px;top:12px;
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
+      background:rgba(28,10,10,.76);border:1px solid rgba(255,255,255,.08);
+      font-size:12px;font-weight:900
+    }
+    .photo-fallback{
+      position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+      color:#f8eae2;background:linear-gradient(180deg, rgba(70,22,22,.62), rgba(24,10,10,.82));
+      text-align:center;padding:20px;
+    }
+    .photo-fallback.show{display:flex}
+    .photo-fallback strong{font-size:1rem}
+    .photo-fallback span{font-size:.92rem;color:var(--muted)}
+
+    .template-info{display:grid;gap:14px}
+    .template-box{
+      padding:16px;border-radius:18px;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .label{
+      color:var(--gold-soft);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px
+    }
+    .value{font-size:1rem;line-height:1.85;color:var(--text)}
+
+    .field{display:grid;gap:8px}
+    .field label{font-size:14px;font-weight:800;color:#fff0ea}
+    .input{
+      width:100%;min-height:54px;padding:14px 16px;border-radius:18px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      color:var(--text);outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .input:focus{
+      border-color:rgba(224,84,84,.35);
+      box-shadow:0 0 0 4px rgba(224,84,84,.08);
+      background:rgba(255,255,255,.05);
+    }
+    .input::placeholder{color:#c8aaa2}
+
+    .template-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .download-note{
+      margin-top:12px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.75;
+    }
+
+    .final-screen{
+      min-height:100vh;display:grid;place-items:center;padding:24px;
+      background:
+        radial-gradient(circle at top, rgba(224,84,84,.12), transparent 26%),
+        radial-gradient(circle at bottom, rgba(213,174,105,.08), transparent 20%),
+        linear-gradient(180deg,#1b0d0d,#140808);
+    }
+    .final-box{width:min(760px,100%);padding:30px;text-align:center}
+
+    .hidden{display:none!important}
+
+    @keyframes screenIn{
+      from{opacity:0;transform:scale(.985) translateY(10px)}
+      to{opacity:1;transform:scale(1) translateY(0)}
+    }
+    @keyframes bgSweep{
+      0%{transform:translateX(-6%) translateY(0)}
+      50%{transform:translateX(6%) translateY(1%)}
+      100%{transform:translateX(-6%) translateY(0)}
+    }
+    @keyframes particleFloat{
+      0%{transform:translateY(0)}
+      50%{transform:translateY(-10px)}
+      100%{transform:translateY(0)}
+    }
+    @keyframes ringPulse{
+      0%{transform:scale(.985);opacity:.20}
+      50%{transform:scale(1.03);opacity:.50}
+      100%{transform:scale(.985);opacity:.20}
+    }
+    @keyframes ringPulse2{
+      0%{transform:scale(.96);opacity:.08}
+      50%{transform:scale(1.05);opacity:.22}
+      100%{transform:scale(.96);opacity:.08}
+    }
+    @keyframes scanMove{
+      0%{top:12%;opacity:.18}
+      12%{opacity:1}
+      50%{top:50%;opacity:1}
+      100%{top:86%;opacity:.16}
+    }
+    @keyframes spin{
+      0%{transform:rotate(0)}
+      100%{transform:rotate(360deg)}
+    }
+    @keyframes dotBlink{
+      0%,100%{opacity:.22;transform:scale(.88)}
+      50%{opacity:1;transform:scale(1.18)}
+    }
+    @keyframes progressShine{
+      0%{transform:translateX(-100%)}
+      100%{transform:translateX(100%)}
+    }
+    @keyframes shineSweep{
+      0%{transform:translateX(-120%)}
+      100%{transform:translateX(150%)}
+    }
+
+    @media (max-width:980px){
+      .hero-grid,.result-grid,.template-grid{grid-template-columns:1fr}
+      .camera-stage{min-height:440px;max-height:70vh}
+    }
+    @media (max-width:640px){
+      .container{width:min(var(--wrap),calc(100% - 18px))}
+      .actions,.template-actions{display:grid;grid-template-columns:1fr}
+      .btn{width:100%}
+      .camera-stage{aspect-ratio:3/4.7;min-height:390px}
+      .face-guide,.radar-ring,.radar-ring2{width:min(76vw,296px)}
+      .orbit{width:min(88vw,360px)}
+      .orbit2{width:min(96vw,430px)}
+      .hud-corner{left:calc(50% - min(76vw,296px)/2);top:calc(50% - min(76vw,296px)/1.95)}
+      .hud-corner2{right:calc(50% - min(76vw,296px)/2);top:calc(50% - min(76vw,296px)/1.95)}
+      .hud-corner3{left:calc(50% - min(76vw,296px)/2);bottom:calc(50% - min(76vw,296px)/1.95)}
+      .hud-corner4{right:calc(50% - min(76vw,296px)/2);bottom:calc(50% - min(76vw,296px)/1.95)}
+      .scanner-dots{width:min(76vw,296px)}
+      .face-shot-wrap{min-height:360px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="homeScreen" class="screen active">
+      <div class="bg-photo"></div>
+      <div class="tech-bg"></div>
+      <div class="bg-lines"></div>
+      <div class="particles"></div>
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+
+      <div class="hero">
+        <div class="container hero-grid">
+          <div>
+            <div class="chip"><span class="chip-dot"></span> nasipadangMAX // Mood Scanner</div>
+            <h1 class="hero-title">
+              Warm <span class="cy">Mood</span><br>
+              Dining <span class="go">Experience</span>
+            </h1>
+            <p class="hero-desc">
+              Selamat datang di <strong>nasipadangMAX</strong>. Coba pengalaman scan wajah dengan suasana elegan:
+              sistem membaca ekspresi Anda secara real-time, lalu memilihkan menu yang paling cocok dengan mood hari ini.
+            </p>
+            <div class="actions">
+              <button id="startBtn" class="btn btn-primary" type="button">Mulai Scan Wajah</button>
+              <button id="aboutBtn" class="btn btn-secondary" type="button">Cara Kerjanya</button>
+            </div>
+            <p class="micro-note" style="margin-top:18px">
+              Fokus sistem ini adalah <strong>mood/ekspresi</strong>, bukan menilai penampilan.
+              Jika AI gagal dimuat atau wajah belum terbaca jelas, hasil cadangan tetap akan diberikan.
+            </p>
+          </div>
+
+          <aside class="panel hero-card">
+            <div class="chip"><span class="chip-dot"></span> Experience Features</div>
+            <div class="feature-list">
+              <div class="feature">
+                <div class="icon">🪞</div>
+                <div>
+                  <h3>Kamera lebih natural</h3>
+                  <p>Tampilan dibuat seperti selfie agar arah gerak terasa nyaman saat digunakan pengunjung.</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="icon">🔥</div>
+                <div>
+                  <h3>Tampilan lebih elegan</h3>
+                  <p>Nuansa visual dibuat hangat, mewah, dan lebih cocok untuk warung makan premium.</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="icon">🎬</div>
+                <div>
+                  <h3>Template siap share</h3>
+                  <p>Setelah scan selesai, hasil bisa masuk ke template promosi, di-download jadi gambar, lalu lanjut ke WhatsApp warung.</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="scanScreen" class="screen">
+      <div class="scan-wrap">
+        <div class="scan-shell">
+          <div>
+            <div class="chip"><span class="chip-dot"></span> Live Detection Mode</div>
+            <h2 class="scan-title">Face Expression Recognition</h2>
+            <p class="scan-sub">
+              Arahkan wajah ke tengah bingkai. Sistem akan memproses ekspresi selama sekitar
+              <strong>10 detik</strong>, lalu memilih mood dominan dan mencocokkannya dengan menu.
+            </p>
+          </div>
+
+          <div class="panel camera-card">
+            <div class="badge" id="aiStatusBadge">Menyiapkan model AI…</div>
+
+            <div class="camera-stage" style="margin-top:14px">
+              <video id="video" autoplay muted playsinline></video>
+
+              <div class="orbit"></div>
+              <div class="orbit2"></div>
+              <div class="radar-ring"></div>
+              <div class="radar-ring2"></div>
+              <div class="face-guide"></div>
+              <div class="scan-line"></div>
+              <div class="hud-corner"></div>
+              <div class="hud-corner2"></div>
+              <div class="hud-corner3"></div>
+              <div class="hud-corner4"></div>
+
+              <div class="scanner-dots">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div class="scan-bottom">
+              <div class="status-row">
+                <div class="status-text" id="scanStatus">Menyiapkan kamera…</div>
+                <div class="status-helper" id="scanTimer">00 / 10 detik</div>
+              </div>
+
+              <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+              </div>
+
+              <div class="actions">
+                <button id="cancelBtn" class="btn btn-secondary" type="button">Kembali</button>
+                <button id="retryBtn" class="btn btn-secondary hidden" type="button">Coba Lagi</button>
+              </div>
+
+              <div class="scan-note">
+                Bila kamera belum aktif, AI gagal dimuat, atau wajah tidak tertangkap jelas,
+                sistem tetap akan memberi rekomendasi alternatif agar pengalaman tetap berjalan.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="result-wrap">
+        <div class="container result-grid">
+          <section class="panel result-card">
+            <div class="result-head">
+              <div>
+                <div class="chip"><span class="chip-dot"></span> Hasil AI</div>
+                <h2 class="result-title">Mood & Menu Result</h2>
+              </div>
+              <div class="mood-pill" id="moodPill">Mood: Menunggu…</div>
+            </div>
+
+            <p id="greetingText" class="result-copy">
+              Terima kasih sudah mencoba scan di nasipadangMAX.
+            </p>
+
+            <div class="panel menu-card">
+              <div class="menu-label">Menu rekomendasi</div>
+              <h3 class="menu-name" id="menuName">Ayam Rendang</h3>
+              <p class="menu-reason" id="menuReason">Menu ini cocok menemani ritme hari Anda.</p>
+            </div>
+
+            <p id="closingText" class="result-close">
+              Semoga makanan pilihan hari ini jadi jeda yang menyenangkan.
+            </p>
+
+            <div class="tiktok-question" id="tiktokQuestionBox">
+              <h3>Mau di-post ke TikTok kita nggak?</h3>
+              <p>
+                Kalau Anda setuju, hasil scan ini bisa dimasukkan ke template promosi
+                <strong>nasipadangMAX</strong>.
+              </p>
+              <div class="actions">
+                <button id="yesTikTokBtn" class="btn btn-primary" type="button">Iya</button>
+                <button id="noTikTokBtn" class="btn btn-secondary" type="button">Tidak</button>
+              </div>
+            </div>
+
+            <div class="template-shell template-hidden" id="templateShell">
+              <div class="panel template-card">
+                <div class="template-top">
+                  <div>
+                    <div class="chip"><span class="chip-dot"></span> TikTok Promo Template</div>
+                    <h3 class="template-title">Siap download & kirim</h3>
+                  </div>
+                </div>
+
+                <div class="post-template" id="postTemplate">
+                  <div class="template-top">
+                    <div class="brand-big">warung <span>nasipadangMAX</span></div>
+                    <div class="mood-pill" id="templateMood">Mood: -</div>
+                  </div>
+
+                  <div class="template-grid">
+                    <div class="face-shot-wrap">
+                      <img id="capturedFace" class="face-shot" alt="Wajah terakhir hasil scan" />
+                      <div class="face-shot-label">Frame terakhir scan</div>
+                      <div class="photo-fallback" id="photoFallback">
+                        <strong>Foto belum tersedia</strong>
+                        <span>Kamera belum menangkap frame yang cukup jelas.</span>
+                      </div>
+                    </div>
+
+                    <div class="template-info">
+                      <div class="template-box">
+                        <div class="label">Menu pilihan</div>
+                        <div class="value" id="templateMenu">Ayam Rendang</div>
+                      </div>
+                      <div class="template-box">
+                        <div class="label">Analisa AI</div>
+                        <div class="value" id="templateAnalysis">
+                          AI membaca suasana hati dan memilihkan menu yang paling pas hari ini.
+                        </div>
+                      </div>
+                      <div class="template-box">
+                        <div class="label">Akun TikTok</div>
+                        <div class="value" id="templateTiktok">@username_tiktok</div>
+                      </div>
+                      <div class="template-box">
+                        <div class="label">Brand</div>
+                        <div class="value">nasipadangMAX</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field" style="margin-top:18px">
+                  <label for="tiktokInput">Ketik akun TikTok kamu</label>
+                  <input id="tiktokInput" class="input" type="text" placeholder="@username_tiktok" />
+                </div>
+
+                <p class="consent" style="margin-top:14px">
+                  Dengan menekan tombol kirim, Anda setuju data ini dikirim ke WhatsApp warung
+                  untuk kebutuhan promosi konten.
+                </p>
+
+                <div class="template-actions">
+                  <button id="downloadTemplateBtn" class="btn btn-secondary" type="button">Download Template Gambar</button>
+                  <button id="sendWaBtn" class="btn btn-primary" type="button">Kirim ke WhatsApp</button>
+                  <button id="cancelTemplateBtn" class="btn btn-secondary" type="button">Batal</button>
+                </div>
+
+                <p class="download-note">
+                  Langkah paling gampang: isi akun TikTok dulu, download gambar template, lalu tekan tombol WhatsApp.
+                  Chat akan terbuka otomatis dengan teks yang sudah diisi.
+                </p>
+              </div>
+            </div>
+
+            <p id="fallbackNote" class="small-note" style="margin-top:16px">
+              Hasil ini disusun dari ekspresi dominan yang tertangkap selama proses scan, lalu dipadukan dengan rekomendasi menu yang sesuai.
+            </p>
+          </section>
+
+          <aside class="side-stack">
+            <div class="panel side-card">
+              <div class="warung-photo">
+                <div class="warung-text">
+                  <strong>nasipadangMAX</strong>
+                  <span>Pengalaman scan rasa yang hangat, modern, dan cocok untuk warung makan yang ingin tampil lebih menarik.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel side-card">
+              <div class="chip"><span class="chip-dot"></span> Tentang AI</div>
+              <p class="helper" style="margin-top:12px">
+                Sistem membaca ekspresi dominan seperti senang, netral, sedih, terkejut, atau lelah,
+                lalu memilih menu yang paling pas secara rasa dan suasana.
+              </p>
+            </div>
+
+            <div class="panel side-card">
+              <div class="chip"><span class="chip-dot"></span> Yang kami jaga</div>
+              <p class="helper" style="margin-top:12px">
+                Tidak ada penilaian wajah, tidak ada skor penampilan, dan tidak ada ranking orang.
+                Output hanya mood, menu, dan pengalaman interaktif yang menyenangkan.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="finalScreen" class="screen">
+      <div class="final-screen">
+        <div class="panel final-box">
+          <div class="chip"><span class="chip-dot"></span> Session Complete</div>
+          <h2 class="final-title" style="margin:14px 0 10px">Terima kasih sudah mencoba</h2>
+          <p id="finalText" class="helper">
+            Semoga menu pilihan hari ini cocok dan bikin mood makin enak.
+          </p>
+          <div class="actions" style="justify-content:center;margin-top:18px">
+            <button id="restartBtn" class="btn btn-primary" type="button">Mulai Lagi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <canvas id="captureCanvas" class="hidden"></canvas>
+    <canvas id="exportCanvas" class="hidden"></canvas>
+  </main>
+
+  <script>
+    (() => {
+      const MODEL_URL = "https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/";
+      const SCAN_DURATION = 10000;
+      const DETECT_INTERVAL = 500;
+      const WA_NUMBER = "62895337312852";
+
+      const screens = {
+        home: document.getElementById("homeScreen"),
+        scan: document.getElementById("scanScreen"),
+        result: document.getElementById("resultScreen"),
+        final: document.getElementById("finalScreen"),
+      };
+
+      const startBtn = document.getElementById("startBtn");
+      const aboutBtn = document.getElementById("aboutBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const retryBtn = document.getElementById("retryBtn");
+      const yesTikTokBtn = document.getElementById("yesTikTokBtn");
+      const noTikTokBtn = document.getElementById("noTikTokBtn");
+      const cancelTemplateBtn = document.getElementById("cancelTemplateBtn");
+      const sendWaBtn = document.getElementById("sendWaBtn");
+      const restartBtn = document.getElementById("restartBtn");
+      const downloadTemplateBtn = document.getElementById("downloadTemplateBtn");
+
+      const video = document.getElementById("video");
+      const captureCanvas = document.getElementById("captureCanvas");
+      const exportCanvas = document.getElementById("exportCanvas");
+      const capturedFace = document.getElementById("capturedFace");
+      const photoFallback = document.getElementById("photoFallback");
+
+      const aiStatusBadge = document.getElementById("aiStatusBadge");
+      const scanStatus = document.getElementById("scanStatus");
+      const scanTimer = document.getElementById("scanTimer");
+      const progressBar = document.getElementById("progressBar");
+
+      const moodPill = document.getElementById("moodPill");
+      const greetingText = document.getElementById("greetingText");
+      const menuName = document.getElementById("menuName");
+      const menuReason = document.getElementById("menuReason");
+      const closingText = document.getElementById("closingText");
+      const fallbackNote = document.getElementById("fallbackNote");
+      const finalText = document.getElementById("finalText");
+
+      const tiktokQuestionBox = document.getElementById("tiktokQuestionBox");
+      const templateShell = document.getElementById("templateShell");
+      const tiktokInput = document.getElementById("tiktokInput");
+      const templateMood = document.getElementById("templateMood");
+      const templateMenu = document.getElementById("templateMenu");
+      const templateAnalysis = document.getElementById("templateAnalysis");
+      const templateTiktok = document.getElementById("templateTiktok");
+
+      let mediaStream = null;
+      let progressTimer = null;
+      let detectTimer = null;
+      let statusTimer = null;
+      let scanFinishTimer = null;
+      let scanStart = 0;
+      let collectedExpressions = [];
+      let modelsReady = false;
+      let lastCaptureDataUrl = "";
+      let currentResult = {
+        mood: "netral",
+        greeting: "",
+        closing: "",
+        menuName: "",
+        menuReason: "",
+        fallback: false,
+        tiktok: ""
+      };
+
+      const statusMessages = [
+        "Menyiapkan kamera…",
+        "Mengunci area wajah…",
+        "Membaca ekspresi secara real-time…",
+        "Menyusun analisa AI…",
+        "Mencocokkan mood dengan menu…"
+      ];
+
+      const moodAliases = {
+        happy: "senang",
+        neutral: "netral",
+        sad: "sedih",
+        surprised: "terkejut",
+        angry: "lelah",
+        fearful: "lelah",
+        disgusted: "netral"
+      };
+
+      const moodContent = {
+        senang: {
+          greetings: [
+            "Energi kamu kelihatan lagi terang. Ada suasana yang ringan dan enak dibawa hari ini.",
+            "AI membaca suasana hati kamu lagi cerah. Momen kayak gini cocok ditemani menu yang nikmat.",
+            "Vibes kamu lagi bagus. Hari ini terasa pas untuk menikmati sesuatu yang hangat dan memuaskan."
+          ],
+          closings: [
+            "Semoga menu ini ikut menjaga energi baik kamu hari ini.",
+            "Nikmati momen kecil ini—kadang bahagia memang datang dari hal yang sederhana.",
+            "Semoga setelah makan, hari kamu tetap terasa hangat dan menyenangkan."
+          ],
+          menus: [
+            { name: "Ayam Bakar", reason: "Rasa bakarnya hangat dan akrab, cocok untuk mood cerah yang pengin dinikmati tanpa ribet." },
+            { name: "Ikan Bakar", reason: "Gurih dan ringan, pas untuk suasana hati yang sedang enak dan nggak mau dibikin berat." },
+            { name: "Ayam Kecap", reason: "Manis-gurihnya lembut, cocok untuk menjaga mood baik tetap terasa nyaman." }
+          ]
+        },
+        netral: {
+          greetings: [
+            "Kamu kelihatan lagi ada di fase yang tenang. Nggak berlebihan, tapi tetap terasa stabil.",
+            "AI membaca ekspresi kamu cukup kalem. Suasana seperti ini cocok ditemani rasa yang mantap.",
+            "Vibes kamu santai. Hari seperti ini pas untuk menikmati menu yang seimbang dan memuaskan."
+          ],
+          closings: [
+            "Semoga menu ini cocok menemani fase tenang yang sedang kamu jalani.",
+            "Pelan-pelan juga tetap termasuk maju. Semoga hari kamu terasa pas setelah makan ini.",
+            "Semoga pilihan ini bikin ritme hari kamu tetap nyaman dan stabil."
+          ],
+          menus: [
+            { name: "Ayam Rendang", reason: "Rasanya kaya dan seimbang, cocok untuk mood netral yang butuh sesuatu yang mantap." },
+            { name: "Rendang", reason: "Pilihan klasik yang kuat dan memuaskan, pas untuk suasana tenang." },
+            { name: "Cancang", reason: "Rasa dan teksturnya mantap, pas untuk hari yang pengin dijalani tanpa banyak drama." }
+          ]
+        },
+        sedih: {
+          greetings: [
+            "Kalau hari ini terasa agak berat, semoga ada satu hal kecil yang bisa bikin hati lebih tenang.",
+            "AI menangkap suasana yang lebih lembut. Mungkin hari ini kamu butuh sesuatu yang hangat dan menenangkan.",
+            "Ada vibes yang lebih pelan hari ini. Semoga makanan enak bisa jadi jeda kecil yang nyaman."
+          ],
+          closings: [
+            "Semoga makanan ini bisa jadi jeda kecil yang menenangkan hati kamu.",
+            "Pelan-pelan ya. Nggak harus kuat terus setiap saat.",
+            "Semoga setelah makan, dada kamu terasa sedikit lebih lega."
+          ],
+          menus: [
+            { name: "Ayam Rendang", reason: "Bumbunya dalam dan hangat, cocok untuk suasana hati yang butuh rasa nyaman." },
+            { name: "Rendang", reason: "Penuh, kaya rasa, dan menguatkan—pas untuk hari yang terasa lebih berat." },
+            { name: "Ayam Kecap", reason: "Manis-gurihnya lembut, cocok untuk hati yang lagi sensitif." }
+          ]
+        },
+        terkejut: {
+          greetings: [
+            "Energi kamu lagi hidup banget. Hari ini terasa lebih aktif dan bergerak cepat.",
+            "AI membaca suasana yang dinamis. Ada vibe ramai yang cocok diseimbangkan dengan menu berkarakter.",
+            "Ekspresi kamu terasa penuh tenaga. Pas buat menu yang rasanya tegas dan berani."
+          ],
+          closings: [
+            "Semoga menu ini bantu menyeimbangkan hari kamu yang lagi ramai.",
+            "Nikmati jeda kecil ini sebelum lanjut ke hal besar berikutnya.",
+            "Semoga setelah makan, energimu tetap hidup tapi lebih terarah."
+          ],
+          menus: [
+            { name: "Ayam Cabe Hijau", reason: "Segar dan punya hentakan rasa, cocok untuk energi aktif yang lagi tinggi." },
+            { name: "Dendeng", reason: "Tekstur dan rasa yang tegas pas untuk suasana yang dinamis." },
+            { name: "Ayam Geprek", reason: "Pilihan yang ekspresif dan langsung terasa, cocok untuk vibe yang lagi meledak." }
+          ]
+        },
+        lelah: {
+          greetings: [
+            "Kayaknya akhir-akhir ini kamu lagi banyak mikir. Semoga ada sedikit ruang buat istirahat hari ini.",
+            "AI membaca suasana yang cenderung lelah. Hari seperti ini cocok ditemani makanan yang hangat dan menguatkan.",
+            "Kadang yang bikin lelah bukan aktivitasnya, tapi isi kepala. Semoga makanan ini jadi bentuk perhatian kecil buat diri sendiri."
+          ],
+          closings: [
+            "Semoga pilihan ini kasih rasa hangat dan sedikit tenaga baru.",
+            "Istirahat sebentar bukan berarti kalah—kadang itu justru cara terbaik buat lanjut.",
+            "Semoga habis makan ini, kamu merasa lebih ringan dan lebih kuat pelan-pelan."
+          ],
+          menus: [
+            { name: "Ayam Rendang", reason: "Bumbunya kaya dan mengenyangkan, cocok untuk mood lelah yang butuh rasa mantap." },
+            { name: "Pangek Masin", reason: "Rasanya hangat dan dalam, cocok buat hari yang butuh dorongan tenang." },
+            { name: "Ayam Bakar", reason: "Familiar, nikmat, dan nggak ribet—cocok saat kamu cuma ingin sesuatu yang enak." }
+          ]
+        }
+      };
+
+      const fallbackMenus = [
+        { mood: "netral", name: "Ayam Rendang", reason: "Pilihan aman yang kaya rasa dan cocok dinikmati di berbagai suasana." },
+        { mood: "senang", name: "Ikan Bakar", reason: "Harum bakarnya terasa ringan dan menyenangkan untuk menemani mood yang baik." },
+        { mood: "lelah", name: "Pangek Masin", reason: "Hangat dan mantap, cocok untuk hari yang butuh sedikit penguat." },
+        { mood: "terkejut", name: "Ayam Cabe Hijau", reason: "Segar dan berani, pas untuk suasana yang lebih hidup." }
+      ];
+
+      function showScreen(name) {
+        Object.values(screens).forEach(screen => screen.classList.remove("active"));
+        screens[name].classList.add("active");
+      }
+
+      function randomPick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      }
+
+      function sanitizeTikTok(value) {
+        const clean = String(value || "").trim().replace(/\s+/g, "");
+        if (!clean) return "";
+        return clean.startsWith("@") ? clean : `@${clean}`;
+      }
+
+      async function ensureModelsLoaded() {
+        if (modelsReady) return true;
+
+        try {
+          aiStatusBadge.textContent = "Memuat model AI ekspresi…";
+          await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+          ]);
+          modelsReady = true;
+          aiStatusBadge.textContent = "Model AI siap";
+          return true;
+        } catch (error) {
+          console.error("Gagal load model:", error);
+          aiStatusBadge.textContent = "Model AI gagal dimuat, fallback aktif";
+          return false;
+        }
+      }
+
+      async function startCamera() {
+        stopCamera();
+
+        const constraints = {
+          audio: false,
+          video: {
+            facingMode: "user",
+            width: { ideal: 720 },
+            height: { ideal: 960 }
+          }
+        };
+
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+          video.srcObject = mediaStream;
+          await video.play();
+          scanStatus.textContent = "Kamera aktif. Posisikan wajah di tengah bingkai.";
+          return true;
+        } catch (error) {
+          console.error("Gagal akses kamera:", error);
+          scanStatus.textContent = "Kamera belum bisa diakses. Sistem akan menyiapkan rekomendasi alternatif.";
+          return false;
+        }
+      }
+
+      function stopCamera() {
+        if (video.srcObject) {
+          video.srcObject.getTracks().forEach(track => track.stop());
+          video.srcObject = null;
+        }
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop());
+          mediaStream = null;
+        }
+      }
+
+      function stopAllTimers() {
+        clearInterval(progressTimer);
+        clearInterval(detectTimer);
+        clearInterval(statusTimer);
+        clearTimeout(scanFinishTimer);
+      }
+
+      function resetScanState() {
+        stopAllTimers();
+        collectedExpressions = [];
+        progressBar.style.width = "0%";
+        scanTimer.textContent = "00 / 10 detik";
+        scanStatus.textContent = "Menyiapkan kamera…";
+        retryBtn.classList.add("hidden");
+      }
+
+      function resetTemplateState() {
+        tiktokQuestionBox.classList.remove("hidden");
+        templateShell.classList.add("template-hidden");
+        tiktokInput.value = "";
+        templateTiktok.textContent = "@username_tiktok";
+        photoFallback.classList.remove("show");
+        capturedFace.removeAttribute("src");
+      }
+
+      function resetAppState() {
+        resetScanState();
+        resetTemplateState();
+        lastCaptureDataUrl = "";
+        currentResult = {
+          mood: "netral",
+          greeting: "",
+          closing: "",
+          menuName: "",
+          menuReason: "",
+          fallback: false,
+          tiktok: ""
+        };
+      }
+
+      function animateStatuses() {
+        let idx = 0;
+        statusTimer = setInterval(() => {
+          idx = (idx + 1) % statusMessages.length;
+          scanStatus.textContent = statusMessages[idx];
+        }, 1750);
+      }
+
+      function captureLastFrame() {
+        if (!video.videoWidth || !video.videoHeight) return "";
+        const ctx = captureCanvas.getContext("2d");
+
+        captureCanvas.width = video.videoWidth;
+        captureCanvas.height = video.videoHeight;
+
+        ctx.save();
+        ctx.translate(captureCanvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+        ctx.restore();
+
+        return captureCanvas.toDataURL("image/jpeg", 0.92);
+      }
+
+      async function detectExpressionsLoop() {
+        if (!modelsReady || !video.videoWidth) return;
+        try {
+          const detection = await faceapi
+            .detectSingleFace(
+              video,
+              new faceapi.TinyFaceDetectorOptions({
+                inputSize: 224,
+                scoreThreshold: 0.45
+              })
+            )
+            .withFaceExpressions();
+
+          if (detection && detection.expressions) {
+            collectedExpressions.push(detection.expressions);
+          }
+        } catch (error) {
+          console.error("Deteksi ekspresi gagal:", error);
+        }
+      }
+
+      function aggregateMood(expressionsList) {
+        if (!expressionsList.length) return null;
+        const totals = {};
+
+        expressionsList.forEach(exp => {
+          Object.entries(exp).forEach(([key, value]) => {
+            totals[key] = (totals[key] || 0) + Number(value || 0);
+          });
+        });
+
+        let topKey = null;
+        let topValue = -1;
+
+        Object.entries(totals).forEach(([key, value]) => {
+          if (value > topValue) {
+            topKey = key;
+            topValue = value;
+          }
+        });
+
+        return moodAliases[topKey] || "netral";
+      }
+
+      async function beginScan() {
+        resetAppState();
+        showScreen("scan");
+
+        const hasFaceApi = typeof window.faceapi !== "undefined";
+        if (!hasFaceApi) {
+          aiStatusBadge.textContent = "Library AI belum termuat, fallback aktif";
+        }
+
+        const modelOk = hasFaceApi ? await ensureModelsLoaded() : false;
+        const cameraOk = await startCamera();
+
+        if (!(modelOk && cameraOk)) {
+          retryBtn.classList.remove("hidden");
+          scanStatus.textContent = !cameraOk
+            ? "Kamera belum bisa diakses. Anda bisa coba lagi."
+            : "Model AI belum siap. Anda bisa coba lagi.";
+          return;
+        }
+
+        scanStatus.textContent = "Kamera aktif. Posisikan wajah di tengah bingkai.";
+        animateStatuses();
+        scanStart = Date.now();
+
+        progressTimer = setInterval(() => {
+          const elapsed = Date.now() - scanStart;
+          const progress = Math.min(100, (elapsed / SCAN_DURATION) * 100);
+          progressBar.style.width = progress + "%";
+
+          const sec = Math.min(10, Math.floor(elapsed / 1000));
+          scanTimer.textContent = `${String(sec).padStart(2, "0")} / 10 detik`;
+        }, 120);
+
+        detectTimer = setInterval(detectExpressionsLoop, DETECT_INTERVAL);
+
+        scanFinishTimer = setTimeout(() => {
+          finishScan(true);
+        }, SCAN_DURATION);
+      }
+
+      function finishScan(attemptedDetection) {
+        stopAllTimers();
+        lastCaptureDataUrl = captureLastFrame();
+        stopCamera();
+
+        const mood = attemptedDetection ? aggregateMood(collectedExpressions) : null;
+
+        if (mood) {
+          renderResult({ mood, fallback: false });
+        } else {
+          const fallback = randomPick(fallbackMenus);
+          renderResult({
+            mood: fallback.mood,
+            fallback: true,
+            forcedMenu: fallback
+          });
+        }
+
+        showScreen("result");
+      }
+
+      function setTemplatePhoto() {
+        if (lastCaptureDataUrl) {
+          capturedFace.src = lastCaptureDataUrl;
+          photoFallback.classList.remove("show");
+        } else {
+          capturedFace.removeAttribute("src");
+          photoFallback.classList.add("show");
+        }
+      }
+
+      function renderResult({ mood, fallback = false, forcedMenu = null }) {
+        const safeMood = moodContent[mood] ? mood : "netral";
+        const content = moodContent[safeMood];
+        const pickedMenu = forcedMenu || randomPick(content.menus);
+        const pickedGreeting = randomPick(content.greetings);
+        const pickedClosing = randomPick(content.closings);
+        const tiktokValue = sanitizeTikTok(tiktokInput.value);
+
+        currentResult = {
+          mood: safeMood,
+          greeting: pickedGreeting,
+          closing: pickedClosing,
+          menuName: pickedMenu.name,
+          menuReason: pickedMenu.reason,
+          fallback,
+          tiktok: tiktokValue
+        };
+
+        moodPill.textContent = `Mood: ${capitalize(safeMood)}`;
+        greetingText.textContent = pickedGreeting;
+        menuName.textContent = pickedMenu.name;
+        menuReason.textContent = pickedMenu.reason;
+        closingText.textContent = pickedClosing;
+
+        fallbackNote.textContent = fallback
+          ? "Wajah belum terbaca dengan cukup jelas atau model AI belum siap, jadi sistem menyiapkan rekomendasi alternatif yang tetap hangat."
+          : "Hasil ini disusun dari ekspresi dominan yang tertangkap selama scan dan dipadukan dengan menu yang paling cocok.";
+
+        templateMood.textContent = `Mood: ${capitalize(safeMood)}`;
+        templateMenu.textContent = pickedMenu.name;
+        templateAnalysis.textContent = shortAnalysis(`${pickedGreeting} ${pickedMenu.reason}`, 180);
+        templateTiktok.textContent = tiktokValue || "@username_tiktok";
+        setTemplatePhoto();
+      }
+
+      function shortAnalysis(text, maxLength = 180) {
+        const clean = String(text || "").trim();
+        if (clean.length <= maxLength) return clean;
+        return clean.slice(0, maxLength).trim() + "…";
+      }
+
+      function openTemplate() {
+        tiktokQuestionBox.classList.add("hidden");
+        templateShell.classList.remove("template-hidden");
+        const currentTikTok = sanitizeTikTok(tiktokInput.value);
+        templateTiktok.textContent = currentTikTok || "@username_tiktok";
+        currentResult.tiktok = currentTikTok;
+        setTemplatePhoto();
+      }
+
+      function closeTemplate() {
+        templateShell.classList.add("template-hidden");
+        tiktokQuestionBox.classList.remove("hidden");
+      }
+
+      function finishAndExit() {
+        finalText.textContent = "Terima kasih sudah mencoba mood scanner di nasipadangMAX. Semoga menu pilihan hari ini cocok dan bikin mood makin enak.";
+        showScreen("final");
+      }
+
+      function restartApp() {
+        stopAllTimers();
+        stopCamera();
+        resetAppState();
+        showScreen("home");
+      }
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+      }
+
+      function drawCroppedImage(ctx, img, x, y, w, h) {
+        const srcRatio = img.width / img.height;
+        const dstRatio = w / h;
+
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+
+        if (srcRatio > dstRatio) {
+          sw = img.height * dstRatio;
+          sx = (img.width - sw) / 2;
+        } else {
+          sh = img.width / dstRatio;
+          sy = (img.height - sh) / 2;
+        }
+
+        ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+      }
+
+      function wrapTextLines(ctx, text, maxWidth) {
+        const words = String(text || "").split(" ");
+        const lines = [];
+        let line = "";
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + " ";
+          const width = ctx.measureText(testLine).width;
+          if (width > maxWidth && i > 0) {
+            lines.push(line.trim());
+            line = words[i] + " ";
+          } else {
+            line = testLine;
+          }
+        }
+        if (line.trim()) lines.push(line.trim());
+        return lines;
+      }
+
+      function drawWrappedTextWithLimit(ctx, text, x, y, maxWidth, lineHeight, font, color, maxLines = 4) {
+        ctx.save();
+        ctx.font = font;
+        ctx.fillStyle = color;
+        const lines = wrapTextLines(ctx, text, maxWidth);
+        const finalLines = lines.slice(0, maxLines);
+
+        if (lines.length > maxLines && finalLines.length) {
+          let last = finalLines[finalLines.length - 1];
+          if (!last.endsWith("…")) finalLines[finalLines.length - 1] = last + "…";
+        }
+
+        finalLines.forEach((line, index) => {
+          ctx.fillText(line, x, y + index * lineHeight);
+        });
+        ctx.restore();
+      }
+
+      async function downloadTemplateImage() {
+        const tiktok = sanitizeTikTok(tiktokInput.value);
+
+        if (!tiktok) {
+          alert("Silakan isi akun TikTok dulu ya.");
+          return;
+        }
+
+        currentResult.tiktok = tiktok;
+        templateTiktok.textContent = tiktok;
+
+        try {
+          const width = 1080;
+          const height = 1500;
+          const ctx = exportCanvas.getContext("2d");
+
+          exportCanvas.width = width;
+          exportCanvas.height = height;
+
+          const grd = ctx.createLinearGradient(0, 0, 0, height);
+          grd.addColorStop(0, "#2b1212");
+          grd.addColorStop(0.55, "#1b0d0d");
+          grd.addColorStop(1, "#140808");
+          ctx.fillStyle = grd;
+          ctx.fillRect(0, 0, width, height);
+
+          const glow1 = ctx.createRadialGradient(220, 180, 30, 220, 180, 280);
+          glow1.addColorStop(0, "rgba(224,84,84,0.26)");
+          glow1.addColorStop(1, "rgba(224,84,84,0)");
+          ctx.fillStyle = glow1;
+          ctx.fillRect(0, 0, width, height);
+
+          const glow2 = ctx.createRadialGradient(900, 200, 20, 900, 200, 240);
+          glow2.addColorStop(0, "rgba(213,174,105,0.22)");
+          glow2.addColorStop(1, "rgba(213,174,105,0)");
+          ctx.fillStyle = glow2;
+          ctx.fillRect(0, 0, width, height);
+
+          ctx.save();
+          ctx.strokeStyle = "rgba(255,255,255,0.04)";
+          ctx.lineWidth = 1;
+          for (let x = 0; x <= width; x += 40) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+          }
+          for (let y = 0; y <= height; y += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          const cardX = 50;
+          const cardY = 50;
+          const cardW = width - 100;
+          const cardH = height - 100;
+
+          roundRect(ctx, cardX, cardY, cardW, cardH, 36, "rgba(36,14,14,0.86)");
+          ctx.strokeStyle = "rgba(255,255,255,0.10)";
+          ctx.lineWidth = 2;
+          roundRectStroke(ctx, cardX, cardY, cardW, cardH, 36);
+
+          ctx.fillStyle = "#fff2ec";
+          ctx.font = "900 38px Arial";
+          ctx.fillText("WARUNG NASIPADANGMAX", cardX + 40, cardY + 64);
+
+          ctx.fillStyle = "#f3dfc3";
+          ctx.font = "700 20px Inter, Arial";
+          ctx.fillText("MOOD SCAN RESULT", cardX + 40, cardY + 98);
+
+          roundRect(ctx, cardX + cardW - 290, cardY + 28, 240, 56, 28, "rgba(224,84,84,0.14)");
+          ctx.strokeStyle = "rgba(224,84,84,0.30)";
+          ctx.lineWidth = 2;
+          roundRectStroke(ctx, cardX + cardW - 290, cardY + 28, 240, 56, 28);
+          ctx.fillStyle = "#ffd7d7";
+          ctx.font = "800 24px Inter, Arial";
+          ctx.fillText(`Mood: ${capitalize(currentResult.mood)}`, cardX + cardW - 260, cardY + 64);
+
+          const imgX = cardX + 40;
+          const imgY = cardY + 140;
+          const imgW = 450;
+          const imgH = 630;
+
+          roundRect(ctx, imgX, imgY, imgW, imgH, 28, "rgba(255,255,255,0.04)");
+          ctx.save();
+          clipRoundRect(ctx, imgX, imgY, imgW, imgH, 28);
+
+          if (lastCaptureDataUrl) {
+            const faceImg = await loadImage(lastCaptureDataUrl);
+            drawCroppedImage(ctx, faceImg, imgX, imgY, imgW, imgH);
+          } else {
+            ctx.fillStyle = "#241010";
+            ctx.fillRect(imgX, imgY, imgW, imgH);
+            ctx.fillStyle = "#fff0ea";
+            ctx.font = "700 26px Inter, Arial";
+            ctx.fillText("Foto belum tersedia", imgX + 90, imgY + imgH / 2);
+          }
+          ctx.restore();
+
+          roundRect(ctx, imgX + 20, imgY + 20, 170, 42, 21, "rgba(28,10,10,0.82)");
+          ctx.fillStyle = "#fff2ec";
+          ctx.font = "800 18px Inter, Arial";
+          ctx.fillText("FRAME TERAKHIR", imgX + 36, imgY + 47);
+
+          const infoX = imgX + imgW + 28;
+          const infoY = imgY;
+          const infoW = cardW - (imgW + 40 + 28 + 40);
+          const boxGap = 18;
+
+          drawInfoBox(ctx, infoX, infoY, infoW, 108, "MENU PILIHAN", currentResult.menuName, 2);
+          drawInfoBox(ctx, infoX, infoY + 108 + boxGap, infoW, 220, "ANALISA AI", shortAnalysis(`${currentResult.greeting} ${currentResult.menuReason}`, 170), 5);
+          drawInfoBox(ctx, infoX, infoY + 108 + 220 + boxGap * 2, infoW, 100, "AKUN TIKTOK", currentResult.tiktok || "@username_tiktok", 2);
+          drawInfoBox(ctx, infoX, infoY + 108 + 220 + 100 + boxGap * 3, infoW, 100, "BRAND", "nasipadangMAX", 2);
+
+          const footerY = imgY + imgH + 30;
+          roundRect(ctx, cardX + 40, footerY, cardW - 80, 180, 28, "rgba(255,255,255,0.03)");
+          ctx.strokeStyle = "rgba(255,255,255,0.08)";
+          ctx.lineWidth = 1.5;
+          roundRectStroke(ctx, cardX + 40, footerY, cardW - 80, 180, 28);
+
+          ctx.fillStyle = "#f3dfc3";
+          ctx.font = "800 18px Inter, Arial";
+          ctx.fillText("PESAN HARI INI", cardX + 70, footerY + 42);
+
+          drawWrappedTextWithLimit(
+            ctx,
+            currentResult.closing,
+            cardX + 70,
+            footerY + 84,
+            cardW - 140,
+            34,
+            "600 28px Inter, Arial",
+            "#fff7f2",
+            3
+          );
+
+          ctx.fillStyle = "rgba(255,242,236,0.72)";
+          ctx.font = "600 18px Inter, Arial";
+          ctx.fillText("Mood scan by nasipadangMAX", cardX + 40, cardY + cardH - 28);
+
+          const dataUrl = exportCanvas.toDataURL("image/png");
+          const link = document.createElement("a");
+          link.href = dataUrl;
+          link.download = `nasipadangMAX-template-${Date.now()}.png`;
+          link.click();
+        } catch (error) {
+          console.error(error);
+          alert("Gagal membuat gambar template. Coba lagi ya.");
+        }
+      }
+
+      function drawInfoBox(ctx, x, y, w, h, label, value, maxLines = 4) {
+        roundRect(ctx, x, y, w, h, 24, "rgba(255,255,255,0.04)");
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 1.5;
+        roundRectStroke(ctx, x, y, w, h, 24);
+
+        ctx.fillStyle = "#f3dfc3";
+        ctx.font = "800 16px Inter, Arial";
+        ctx.fillText(label, x + 20, y + 34);
+
+        drawWrappedTextWithLimit(
+          ctx,
+          value,
+          x + 20,
+          y + 68,
+          w - 40,
+          28,
+          "600 22px Inter, Arial",
+          "#fff7f2",
+          maxLines
+        );
+      }
+
+      function roundRect(ctx, x, y, width, height, radius, fillStyle) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+        ctx.fillStyle = fillStyle;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function roundRectStroke(ctx, x, y, width, height, radius) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function clipRoundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+        ctx.clip();
+      }
+
+      function sendToWhatsApp() {
+        const tiktok = sanitizeTikTok(tiktokInput.value);
+
+        if (!tiktok) {
+          alert("Silakan isi akun TikTok dulu ya.");
+          return;
+        }
+
+        currentResult.tiktok = tiktok;
+        templateTiktok.textContent = tiktok;
+
+        const message =
+`Halo nasipadangMAX, ada pengunjung yang setuju untuk ikut template TikTok.
+
+Akun TikTok: ${tiktok}
+Mood terdeteksi: ${capitalize(currentResult.mood)}
+Menu rekomendasi: ${currentResult.menuName}
+
+Analisa AI:
+${currentResult.greeting}
+${currentResult.menuReason}
+
+Penutup:
+${currentResult.closing}
+
+Catatan:
+Mohon sertakan gambar template yang sudah di-download.`;
+
+        const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(url, "_blank");
+        finalText.textContent = "WhatsApp sudah dibuka. Kalau sudah download templatenya, tinggal lanjut kirim ke chat warung. Terima kasih sudah ikut promosi nasipadangMAX.";
+        showScreen("final");
+      }
+
+      startBtn.addEventListener("click", beginScan);
+      cancelBtn.addEventListener("click", restartApp);
+      retryBtn.addEventListener("click", beginScan);
+      yesTikTokBtn.addEventListener("click", openTemplate);
+      noTikTokBtn.addEventListener("click", finishAndExit);
+      cancelTemplateBtn.addEventListener("click", closeTemplate);
+      sendWaBtn.addEventListener("click", sendToWhatsApp);
+      restartBtn.addEventListener("click", restartApp);
+      downloadTemplateBtn.addEventListener("click", downloadTemplateImage);
+
+      tiktokInput.addEventListener("input", () => {
+        const clean = sanitizeTikTok(tiktokInput.value);
+        templateTiktok.textContent = clean || "@username_tiktok";
+        currentResult.tiktok = clean;
+      });
+
+      aboutBtn.addEventListener("click", () => {
+        alert(
+          "Cara kerja singkat:
+
+" +
+          "1. Tekan 'Mulai Scan Wajah'
+" +
+          "2. Kamera selfie aktif sekitar 10 detik
+" +
+          "3. AI membaca ekspresi dominan secara real-time
+" +
+          "4. Sistem memberi rekomendasi menu + kata-kata AI
+" +
+          "5. Pengunjung bisa memilih ikut template TikTok atau tidak
+" +
+          "6. Template bisa di-download jadi gambar
+" +
+          "7. WhatsApp dibuka otomatis dengan teks yang sudah diisi"
+        );
+      });
+
+      window.addEventListener("beforeunload", () => {
+        stopAllTimers();
+        stopCamera();
+      });
+    })();
+  </script>
+</body>
+</html>
